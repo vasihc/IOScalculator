@@ -44,7 +44,21 @@ class ViewController: UIViewController {
         }
     }
     
-    private var brain = calculatorBrain()
+    var savedProgram: calculatorBrain.PropertyList?
+    
+    @IBAction func save() {
+        savedProgram = brain.programm
+    }
+    
+    @IBAction func restore() {
+        if savedProgram != nil {
+            brain.programm = savedProgram!
+            displayValue = brain.result
+        }
+    }
+    
+    
+    lazy var brain = calculatorBrain()
     
     @IBAction private func performOperation(_ sender: UIButton) {
         if userIsTheMiddleOfTyping {

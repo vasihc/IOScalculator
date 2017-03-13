@@ -12,8 +12,11 @@ import Foundation
 class calculatorBrain
 {
     private var accumulator = 0.0
+    private var internalProgram = [AnyObject]()
+    
     func setOperand (operand: Double) {
         accumulator = operand
+        internalProgram.append(operand as AnyObject)
     }
     
     private var operations: Dictionary<String,Operation>  = [
@@ -37,6 +40,7 @@ class calculatorBrain
     }
     
     func performOperation(symbol: String) {
+        internalProgram.append(symbol as AnyObject)
         if let operation = operations[symbol] {
             switch operation {
             case .Constant(let value) :
@@ -64,6 +68,30 @@ class calculatorBrain
         var binaryFunction : (Double, Double) -> Double
         var firstOperand : Double
         
+    }
+    
+    typealias PropertyList = AnyObject
+    var programm: PropertyList {
+        get {
+            return internalProgram as calculatorBrain.PropertyList
+        }
+        set {
+            clear()
+            if let arrayOfOps = newValue as? [AnyObject] {
+                for op in arrayOfOps{
+                    if let operand = op as? Double {
+                    setOperand(operand: operand)
+                    } else if let operation = op as? String {
+                        performOperation(symbol: operation)
+                    }
+                }
+            }
+        }
+    }
+    func clear() {
+        accumulator = 0.0
+        pending = nil
+        internalProgram.removeAll()
     }
     var result: Double {
         get {
